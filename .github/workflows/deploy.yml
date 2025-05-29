@@ -43,11 +43,14 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@13.239.37.52 "mkdir -p /home/ubuntu/node-vue-ele-app"
 
           echo "--- Start SCP (Docker project) ---"
-          scp -o StrictHostKeyChecking=no -i key.pem -r \
-            docker-compose.yml \
-            client \
-            server \
-            ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
+
+          scp -o StrictHostKeyChecking=no -i key.pem -r docker-compose.yml
+          echo "--- compose SCP (Docker project) ---"
+          scp -o StrictHostKeyChecking=no -i key.pem -r client
+          echo "--- client SCP (Docker project) ---"
+          scp -o StrictHostKeyChecking=no -i key.pem -r server
+          echo "--- server SCP (Docker project) ---"
+          scp -o StrictHostKeyChecking=no -i key.pem -r ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
 
           echo "--- Start SSH commands (Docker Compose) ---"
           ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@13.239.37.52 << 'EOF'
