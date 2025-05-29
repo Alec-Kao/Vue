@@ -20,13 +20,17 @@ jobs:
 
       - name: Install and build frontend
         run: |
+          echo "=== Install frontend ==="
           cd client
           npm install
           npm run build
+          echo "=== Done build frontend ==="
 
       - name: Install backend dependencies
         run: |
+          echo "=== Install backend ==="
           npm install
+          echo "=== Done backend install ==="
 
       - name: Deploy to EC2 via SSH
         env:
@@ -34,18 +38,51 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > key.pem
           chmod 400 key.pem
-          ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@13.239.37.52 "mkdir -p /home/ubuntu/node-vue-ele-app"
-          
-          echo "--- Start SCP ---"
-          scp -o StrictHostKeyChecking=no -i key.pem -r server.js package.json package-lock.json config models routes client ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
-          echo "--- End SCP ---"
 
+          echo "--- Connecting EC2 ---"
+          ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@13.239.37.52 "mkdir -p /home/ubuntu/node-vue-ele-app"
+
+          # echo "--- Start SCP ---"
+          # scp -o StrictHostKeyChecking=no -i key.pem -r \
+          #   server.js \
+          #   package.json \
+          #   package-lock.json \
+          #   config \
+          #   models \
+          #   routes \
+          #   client/dist \
+          #   ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
+
+          echo "--- Start SCP ---"
+
+          scp -o StrictHostKeyChecking=no -i key.pem server.js ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
+          echo "✅ server.js 傳送完成"
+
+          scp -o StrictHostKeyChecking=no -i key.pem package.json ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
+          echo "✅ package.json 傳送完成"
+
+          scp -o StrictHostKeyChecking=no -i key.pem package-lock.json ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
+          echo "✅ package-lock.json 傳送完成"
+
+          scp -o StrictHostKeyChecking=no -i key.pem -r config ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
+          echo "✅ config 傳送完成"
+
+          scp -o StrictHostKeyChecking=no -i key.pem -r models ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
+          echo "✅ models 傳送完成"
+
+          scp -o StrictHostKeyChecking=no -i key.pem -r routes ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
+          echo "✅ routes 傳送完成"
+
+          scp -o StrictHostKeyChecking=no -i key.pem -r client/dist ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app/client
+          echo "✅ client/dist 傳送完成"
+
+          echo "--- Start SSH commands ---"
           ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@13.239.37.52 << 'EOF'
-            echo "--- SSH Connected ---"
+            echo "--- SSH CONNECTED ---"
             cd /home/ubuntu/node-vue-ele-app
             echo "--- Installing backend ---"
             npm install
-            echo "--- Starting PM2 ---"
+            echo "--- Restarting PM2 ---"
             pm2 restart server.js || pm2 start server.js --name node-app
             echo "--- DONE ---"
           EOF

@@ -1,0 +1,14 @@
+# 忽略 Node.js 相依套件
+node_modules/
+
+# 前端編譯產出
+dist/
+
+# log 檔案
+*.log
+
+# 本地環境變數設定
+.env
+
+# SSH 私鑰（避免外洩）
+*.pem
