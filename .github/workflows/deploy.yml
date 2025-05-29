@@ -47,7 +47,11 @@ jobs:
           ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
 
           ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@13.239.37.52 << 'EOF'
+            echo "--- SSH Connected ---"
             cd /home/ubuntu/node-vue-ele-app
+            echo "--- Installing backend ---"
             npm install
+            echo "--- Starting PM2 ---"
             pm2 restart server.js || pm2 start server.js --name node-app
+            echo "--- DONE ---"
           EOF
