@@ -44,11 +44,11 @@ jobs:
 
           echo "--- Start SCP (Docker project) ---"
 
-          scp -o StrictHostKeyChecking=no -i key.pem -r docker-compose.yml
+          scp -o StrictHostKeyChecking=no -i key.pem -r docker-compose.yml ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
           echo "--- compose SCP (Docker project) ---"
-          scp -o StrictHostKeyChecking=no -i key.pem -r client
+          scp -o StrictHostKeyChecking=no -i key.pem -r client ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
           echo "--- client SCP (Docker project) ---"
-          scp -o StrictHostKeyChecking=no -i key.pem -r server
+          scp -o StrictHostKeyChecking=no -i key.pem -r server ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
           echo "--- server SCP (Docker project) ---"
           scp -o StrictHostKeyChecking=no -i key.pem -r ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
 
