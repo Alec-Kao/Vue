@@ -43,23 +43,22 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@13.239.37.52 "mkdir -p /home/ubuntu/node-vue-ele-app"
 
           echo "--- Start SCP (Docker project) ---"
-
-          scp -o StrictHostKeyChecking=no -i key.pem -r docker-compose.yml ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
+          scp -o StrictHostKeyChecking=no -i key.pem docker-compose.yml ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
           echo "--- compose SCP (Docker project) ---"
+
           scp -o StrictHostKeyChecking=no -i key.pem -r client ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
           echo "--- client SCP (Docker project) ---"
-          scp -o StrictHostKeyChecking=no -i key.pem -r server ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
-          echo "--- server SCP (Docker project) ---"
-          scp -o StrictHostKeyChecking=no -i key.pem -r ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
+
+          scp -o StrictHostKeyChecking=no -i key.pem Dockerfile server.js package.json package-lock.json ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
+          echo "--- server files SCP (Docker project) ---"
+
+          scp -o StrictHostKeyChecking=no -i key.pem -r config models "routes\\api" ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
+          echo "--- backend folders SCP (Docker project) ---"
 
           echo "--- Start SSH commands (Docker Compose) ---"
           ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@13.239.37.52 << 'EOF'
-            echo "--- SSH CONNECTED ---"
             cd /home/ubuntu/node-vue-ele-app
-            echo "--- Building Docker containers ---"
             docker compose down
             docker compose build
-            echo "--- Starting containers ---"
             docker compose up -d
-            echo "--- DONE DEPLOY ---"
           EOF
