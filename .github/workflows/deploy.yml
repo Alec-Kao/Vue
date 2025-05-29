@@ -24,7 +24,7 @@ jobs:
           cd client
           npm install
           npm run build
-          mv dist ../client-dist
+          mv dist ../client/dist
           echo "=== Done build frontend ==="
 
       - name: Install backend dependencies
