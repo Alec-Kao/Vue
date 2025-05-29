@@ -32,7 +32,7 @@ jobs:
           npm install
           echo "=== Done backend install ==="
 
-      - name: Deploy to EC2 via SSH
+      - name: Deploy to EC2 via SSH using Docker
         env:
           PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY }}
         run: |
@@ -42,47 +42,21 @@ jobs:
           echo "--- Connecting EC2 ---"
           ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@13.239.37.52 "mkdir -p /home/ubuntu/node-vue-ele-app"
 
-          # echo "--- Start SCP ---"
-          # scp -o StrictHostKeyChecking=no -i key.pem -r \
-          #   server.js \
-          #   package.json \
-          #   package-lock.json \
-          #   config \
-          #   models \
-          #   routes \
-          #   client/dist \
-          #   ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
+          echo "--- Start SCP (Docker project) ---"
+          scp -o StrictHostKeyChecking=no -i key.pem -r \
+            docker-compose.yml \
+            client \
+            server \
+            ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
 
-          echo "--- Start SCP ---"
-
-          scp -o StrictHostKeyChecking=no -i key.pem server.js ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
-          echo "✅ server.js 傳送完成"
-
-          scp -o StrictHostKeyChecking=no -i key.pem package.json ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
-          echo "✅ package.json 傳送完成"
-
-          scp -o StrictHostKeyChecking=no -i key.pem package-lock.json ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
-          echo "✅ package-lock.json 傳送完成"
-
-          scp -o StrictHostKeyChecking=no -i key.pem -r config ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
-          echo "✅ config 傳送完成"
-
-          scp -o StrictHostKeyChecking=no -i key.pem -r models ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
-          echo "✅ models 傳送完成"
-
-          scp -o StrictHostKeyChecking=no -i key.pem -r routes ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app
-          echo "✅ routes 傳送完成"
-
-          scp -o StrictHostKeyChecking=no -i key.pem -r client/dist ubuntu@13.239.37.52:/home/ubuntu/node-vue-ele-app/client
-          echo "✅ client/dist 傳送完成"
-
-          echo "--- Start SSH commands ---"
+          echo "--- Start SSH commands (Docker Compose) ---"
           ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@13.239.37.52 << 'EOF'
             echo "--- SSH CONNECTED ---"
             cd /home/ubuntu/node-vue-ele-app
-            echo "--- Installing backend ---"
-            npm install
-            echo "--- Restarting PM2 ---"
-            pm2 restart server.js || pm2 start server.js --name node-app
-            echo "--- DONE ---"
+            echo "--- Building Docker containers ---"
+            docker compose down
+            docker compose build
+            echo "--- Starting containers ---"
+            docker compose up -d
+            echo "--- DONE DEPLOY ---"
           EOF

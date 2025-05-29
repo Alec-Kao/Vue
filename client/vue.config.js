@@ -58,7 +58,7 @@ module.exports = {
     proxy: {
       // 配置跨域
       "/api": {
-        target: "http://localhost:5000/api",
+        target: "http://localhost:5000",
         ws:true,
         changeOrigin: true,
         pathRewrite: { "^/api": "" }
