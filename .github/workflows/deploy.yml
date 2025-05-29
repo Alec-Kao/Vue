@@ -56,10 +56,10 @@ jobs:
           echo "--- backend folders SCP (Docker project) ---"
 
           echo "--- Start SSH commands (Docker Compose) ---"
-          ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@13.239.37.52 << 'EOF'
-            sudo apt update && sudo apt install -y tmux
-            cd /home/ubuntu/node-vue-ele-app
-            echo "使用 tmux 開始部署"
-            tmux new-session -d -s deploy_session 'docker compose down && docker compose build && docker compose up -d'
-            echo "tmux 中啟動 Docker 完成"
-          EOF
+
+          # 在主機端執行單行指令，避免 Broken pipe
+          ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@13.239.37.52 "sudo apt update && sudo apt install -y tmux"
+
+          # 在主機端背景啟動 docker compose 部署
+          ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@13.239.37.52 \
+            "cd /home/ubuntu/node-vue-ele-app && tmux new-session -d -s deploy 'docker compose down && docker compose build && docker compose up -d'"
