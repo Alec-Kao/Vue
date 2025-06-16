@@ -42,40 +42,30 @@
   </el-row>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-import {
-  House, Wallet, User
-} from '@element-plus/icons-vue'
+<script setup lang="ts">
+import { ref } from 'vue'
+import { House, Wallet, User } from '@element-plus/icons-vue'
 
-export default defineComponent({
-  name: 'left-menu',
-  components: { House },
-  data() {
-    return {
-      items: [
-        {
-          icon: 'fa-money',
-          name: '資金管理',
-          path: 'fund',
-          iconComponent: Wallet,
-          children: [
-            { path: 'fundlist', name: '資金流水' }
-          ]
-        },
-        {
-          icon: 'fa-asterisk',
-          name: '訊息管理',
-          path: 'info',
-          iconComponent: User,
-          children: [
-            { path: 'infoshow', name: '個人資訊' }
-          ]
-        }
-      ]
-    }
+const items = ref([
+  {
+    icon: 'fa-money',
+    name: '帳務管理',
+    path: 'fund',
+    iconComponent: Wallet,
+    children: [
+      { path: 'fundlist', name: '帳務明細' }
+    ]
+  },
+  {
+    icon: 'fa-asterisk',
+    name: '帳戶資訊',
+    path: 'info',
+    iconComponent: User,
+    children: [
+      { path: 'infoshow', name: '	個人資訊' }
+    ]
   }
-})
+])
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -112,4 +102,17 @@ export default defineComponent({
 a {
   text-decoration: none;
 }
+
+/* 響應式：手機時縮小導航欄 */
+/* @media (max-width: 768px) {
+  .menu_page {
+    width: 60px !important;
+  }
+  .el-menu-vertical-demo:not(.el-menu--collapse) {
+    width: 60px !important;
+  }
+  .el-submenu .el-menu-item {
+    min-width: 120px;
+  }
+} */
 </style>

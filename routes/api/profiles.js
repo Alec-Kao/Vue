@@ -5,6 +5,35 @@ const passport = require("passport");
 
 const Profile = require("../../models/Profile")
 
+// $route GET api/profiles/search
+// @desc 查詢指定條件的資訊
+// @access Private
+router.get("/search", passport.authenticate("jwt", { session: false }), async (req, res) => {
+    const { startTime, endTime, type } = req.query;
+    const filter = {};
+
+    // 根據時間條件加入查詢
+    if (startTime && endTime) {
+        filter.date = {
+            $gte: new Date(startTime),
+            $lte: new Date(endTime)
+        };
+    }
+
+    // 加入收支類型條件
+    if (type && type !== '全部') {
+        filter.type = type;
+    }
+
+    try {
+        const result = await Profile.find(filter).sort({ date: -1 }); // 按建立時間倒序
+        res.json(result);
+    } catch (err) {
+        console.error('查詢錯誤', err);
+        res.status(500).json({ message: '伺服器錯誤', error: err.message });
+    }
+});
+
 // $route GET api/profiles/test
 // @desc 返回請求的 json 數據
 // @access Public

@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 // Create Schema
 const ProfileSchema = new Schema({
     type: {
-        type: String
+        type: String,
+        required: true
     },
     describe: {
         type: String
@@ -26,7 +27,9 @@ const ProfileSchema = new Schema({
     },
     date: {
         type: Date,
-        default: Date.now
+        // default: Date.now
+        default: () => new Date(),
+        index: true
     }
 })
 

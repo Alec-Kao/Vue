@@ -4,15 +4,8 @@
     </div>
 </template>
 
-<script>
-import HeadNav from '@/components/HeadNav.vue';
-
-export default {
-    name: "index",
-    components: {
-        HeadNav
-    }
-};
+<script setup>
+import HeadNav from '@/components/HeadNav.vue'
 </script>
 
 <style scoped>

@@ -11,8 +11,19 @@ import store from './store';
 const app = createApp(App);
 app.config.globalProperties.$axios = axios;
 // Vue.use(ElementUI); // Vue 2 用法
-createApp(App)
-    .use(store)
+app.use(store)
     .use(router)
     .use(ElementPlus) // Vue 3 用法
     .mount('#app')
+
+// 安靜處理 ResizeObserver loop 錯誤（瀏覽器層級）
+const observerErrorHandler = () => {
+  const noop = () => {};
+  window.ResizeObserver = class ResizeObserver {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  } as any;
+};
+
+observerErrorHandler();

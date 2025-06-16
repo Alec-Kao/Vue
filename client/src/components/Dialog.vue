@@ -10,7 +10,7 @@
             <!-- <span>添加資金訊息</span> -->
             <div class="form">
               <el-form
-                ref="form"
+                ref="formRef"
                 :model="formData"
                 :rules="form_rules"
                 label-width="120px"
@@ -28,24 +28,24 @@
                   </el-select>
                 </el-form-item>
 
-                <el-form-item prop='describe' label="收支描述">
-                    <el-input type="describe" v-model="formData.describe"></el-input>
+                <el-form-item prop='describe' label="收支說明">
+                    <el-input type="text" v-model="formData.describe"></el-input>
                 </el-form-item>
 
-                <el-form-item prop='income'  label="收入:">
-                  <el-input type="income" v-model="formData.income"></el-input>
+                <el-form-item prop='income' label="收入:">
+                  <el-input type="number" v-model="formData.income"></el-input>
                 </el-form-item>
 
                 <el-form-item prop='expend' label="支出:">
-                  <el-input type="expend" v-model="formData.expend"></el-input>
+                  <el-input type="number" v-model="formData.expend"></el-input>
                 </el-form-item>
 
-                <el-form-item prop='cash' label="帳戶現金:">
-                  <el-input type="cash" v-model="formData.cash"></el-input>
+                <el-form-item prop='cash' label="帳戶餘額:">
+                  <el-input type="number" v-model="formData.cash"></el-input>
                 </el-form-item>
 
                 <el-form-item label="備註:">
-                  <el-input type="textarea" v-model="formData.remark"></el-input>
+                  <el-input type="text" v-model="formData.remark"></el-input>
                 </el-form-item>
 
                 <el-form-item  class="text_right">
@@ -59,86 +59,80 @@
     </div>
 </template>
 
-<script>
-import axios from "axios";
+<script setup>
+import { ref, watch } from 'vue'
+import { ElMessage } from 'element-plus'
+import axios from 'axios'
 
-export default {
-  name: "Dialog",
-  data() {
-    return {
-      // 移動至FundList.vue
-      // formData: {
-      //   type: "",
-      //   describe: "",
-      //   income: "",
-      //   expend: "",
-      //   cash: "",
-      //   remark: "",
-      //   id: ""
-      // },
-      format_type_list: [
-        "提領",
-        "提領手續費",
-        "儲值",
-        "優惠券",
-        "儲值禮券",
-        "轉帳"
-      ],
-      form_rules: {
-        describe: [
-          { required: true, message: "收支描述不能為空" }
-        ],
-        income: [
-          { required: true, message: "收入不能為空!", trigger: "blur" }
-        ],
-        expend: [
-          { required: true, message: "支出不能為空!", trigger: "blur" }
-        ],
-        cash: [{ required: true, message: "帳戶不能為空!", trigger: "blur" }]
+
+// Props
+const { dialog, formData } = defineProps({
+  dialog: Object,
+  formData: Object,
+})
+
+// Emits
+const emit = defineEmits(['update'])
+
+// 表單 Ref
+const formRef = ref(null)
+
+// 資料與驗證規則
+const format_type_list = [
+  '提領',
+  '提領手續費',
+  '儲值',
+  '優惠券',
+  '儲值禮券',
+  '轉帳'
+]
+
+const form_rules = {
+  describe: [
+    { required: true, message: '收支描述不能為空' }
+  ],
+  income: [
+    { required: true, message: '收入不能為空!', trigger: 'blur' }
+  ],
+  expend: [
+    { required: true, message: '支出不能為空!', trigger: 'blur' }
+  ],
+  cash: [
+    { required: true, message: '帳戶不能為空!', trigger: 'blur' }
+  ]
+}
+
+// 提交函數
+const onSubmit = () => {
+  formRef.value.validate(valid => {
+    if (valid) {
+      let url = ''
+      if (dialog.option === 'add')
+        url = 'add'
+      else
+        url = `edit/${formData.id}`
+  
+      axios.post(`/api/profiles/${url}`, formData)
+        .then(() => {
+          ElMessage.success('新增數據成功')
+          dialog.show = false
+          emit('update')
+        })
+    }
+  })
+}
+
+watch(
+  () => dialog.show,
+  (newVal) => {
+    if (newVal) {
+      // 如果使用者沒有指定，預設選擇第一項
+      if (!formData.type) {
+        formData.type = format_type_list[0]
       }
     }
-  },
-  props: {
-    // modelValue: {
-    //   type: Boolean,
-    //   required: true,
-    // },
-    dialog: Object,
-    formData: Object
-  },
-  computed: {
-    visible: {
-      get() {
-        return this.modelValue;
-      },
-      set(val) {
-        this.$emit("update:modelValue", val);
-      },
-    },
-  },
-  methods: {
-    onSubmit(form) {
-      this.$refs[form].validate(valid => {
-        if (valid) {
-          const url = this.dialog.option == "add" ? "add" : `edit/${this.formData.id}`;
-          // console.log(this.formData);
-          axios.post(`/api/profiles/${url}`, this.formData)
-          .then(res => {
-            // 新增成功
-            this.$message({
-              message: "新增數據成功",
-              type: "success"
-            })
-          });
-          // 隱藏 dialog
-          // this.visible = false;
-          this.dialog.show = false;
-          this.$emit("update");
-        }
-      })
-    }
   }
-};
+)
 </script>
 
 <style scoped>

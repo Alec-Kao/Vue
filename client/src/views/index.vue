@@ -5,20 +5,12 @@
         <div class="rightContainer">
             <router-view></router-view>
         </div>
-        <router-view></router-view>
     </div>
 </template>
 
-<script>
-import HeadNav from "../components/HeadNav"
-import LeftMenu from "../components/LeftMenu.vue";
-export default {
-    name: "index",
-    components: {
-        HeadNav,
-        LeftMenu
-    }
-};
+<script setup>
+import HeadNav from "../components/HeadNav.vue"
+import LeftMenu from "../components/LeftMenu.vue"
 </script>
 
 <style>

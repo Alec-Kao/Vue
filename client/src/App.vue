@@ -10,7 +10,9 @@
 
 <style>
 html, body {
+  width: max-content;
   height: 100%;
+  min-width: 100%;
   margin: 0;
 }
 

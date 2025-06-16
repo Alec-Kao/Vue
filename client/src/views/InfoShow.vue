@@ -22,15 +22,12 @@
     </div>
 </template>
 
-<script>
-export default {
-  name: "infoshow",
-  computed: {
-    user() {
-      return this.$store.getters.user;
-    }
-  }
-};
+<script setup>
+import { computed } from 'vue';
+import { useStore } from 'vuex';
+
+const store = useStore();
+const user = computed(() => store.getters.user);
 </script>
 
 <style scoped>

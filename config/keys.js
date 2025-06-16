@@ -1,5 +1,6 @@
+require('dotenv').config(); // 載入 .env 變數
+
 module.exports = {
-    //mongoURI: "mongodb+srv://kaoalec:test1234@cluster0.tyvvjyi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
-    mongoURI: "mongodb+srv://kaoalec:test1234@cluster0.tyvvjyi.mongodb.net/node-vue-element",
-    secretOrKey: "secret"
-}
+    mongoURI: process.env.MONGO_URI,
+    secretOrKey: process.env.SECRET_OR_KEY
+};

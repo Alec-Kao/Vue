@@ -1,7 +1,6 @@
 import axios from "axios";
 // import { Message, Loading } from "element-ui"; // Vue 2 
 import { ElMessage, ElLoading } from "element-plus";
-import { response } from "express";
 import router from "./router";
 // let loading; // Vue 2
 let loading: ReturnType<typeof ElLoading.service>;
@@ -16,7 +15,7 @@ function startLoading() {
 function endLoading() {
     setTimeout(() => {
         loading.close();
-    }, 300); // 延遲 300ms，避免畫面太快看不到動畫
+    }); // 延遲 300ms，避免畫面太快看不到動畫
 }
 
 // 攔截請求

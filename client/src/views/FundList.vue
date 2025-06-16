@@ -3,58 +3,93 @@
         <div>
             <el-form :inline="true" res="add_data" :model="search_data">
                 <!-- 篩選 -->
-                <el-form-item label="按照時間篩選:">
-                    <!-- <span class="demonstration">With default time</span> -->
-                    <el-date-picker
+                <el-row style="flex-wrap: wrap;">
+                  <el-col>
+                    <el-form-item label="查詢方法，可為空:"></el-form-item>
+                  </el-col>
+                  <el-col>
+                    <el-form-item label="時間:" class="selectTime">
+                      <el-date-picker
                         v-model="search_data.startTime"
                         type="datetime"
-                        placeholder="選擇開始時間"
+                        placeholder="開始時間"
                         :default-time="defaultTime"
-                    /> 
-                    --
-                    <el-date-picker
+                      />
+                      --
+                      <el-date-picker
                         v-model="search_data.endTime"
                         type="datetime"
-                        placeholder="選擇結束時間"
+                        placeholder="結束時間"
                         :default-time="defaultTime"
-                    />
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" size="small" @click="handleSearch()">篩選</el-button>
-                </el-form-item>
-                <el-form-item class="btnRight">
-                    <el-button type="primary" 
-                        size="small" 
-                        v-if = "user.identity == 'manager'" 
+                      />
+                    </el-form-item>
+
+                    <el-form-item label="收支項目:" class="selectItem">
+                      <el-select v-model="search_data.type" 
+                        placeholder="請選擇收支項目" 
+                        clearable
+                        style="width: 150px"
+                      >
+                        <el-option label="全部" :value="'全部'" />
+                        <el-option label="提領手續費" :value="'提領手續費'" />
+                        <el-option label="儲值" :value="'儲值'" />
+                        <el-option label="優惠券" :value="'優惠券'" />
+                        <el-option label="儲值禮券" :value="'儲值禮券'" />
+                        <el-option label="轉帳" :value="'轉帳'" />
+                      </el-select>
+                    </el-form-item>
+
+                    <el-form-item class="selectBtn">
+                      <el-button type="primary" @click="handleSearch()">篩選</el-button>
+                      <el-button type="primary" @click="handleReset()">顯示全部</el-button>
+                    </el-form-item>
+
+                    <el-form-item class="btnAdd">
+                      <el-button
+                        v-if="user.identity === 'manager'"
+                        type="primary" 
                         @click="handleAdd()"
-                    >
+                      >
                         新增
-                    </el-button>
-                </el-form-item>
+                      </el-button>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
             </el-form>
         </div>
         <div class="table_container">
             <el-table 
-                v-if="tableData.length > 0" 
                 :data="tableData"
                 :fit="true" 
                 max-height="450" 
                 border
-                        :default-sort = "{prop: 'date', order: 'descending'}"
-                style="width: 100%">
+                :default-sort = "{prop: 'date', order: 'descending'}"
+                style="width: 100%"
+            >
+                 <!-- 自訂空狀態 -->
+                <template #empty>
+                  <div style="text-align: center; color: #999; font-size: 16px;">
+                    目前無資料
+                  </div>
+                </template>
+
                 <el-table-column 
                     type="index" 
                     label="序號"
                     align='center'
-                    min-width="70">
+                    min-width="70"
+                >
+                    <template #default="scope">
+                      {{ (paginations.page_index - 1) * paginations.page_size + scope.$index + 1 }}
+                    </template>
                 </el-table-column>
                 <el-table-column 
                     prop="date" 
-                    label="創建時間"
+                    label="建立時間"
                     align='center'
                     min-width="250">
                     <template #default="scope">
-                        <div style="display: flex; align-items: center;">
+                        <div style="display: flex; justify-content: center;">
                             <el-icon><timer /></el-icon>
                             <span style="margin-left: 10px">{{ scope.row.date }}</span>
                         </div>
@@ -64,11 +99,11 @@
                     prop="type"
                     label="收支項目"
                     align='center'
-                    min-width="150">
+                    min-width="120">
                 </el-table-column>
                 <el-table-column
                     prop="describe"
-                    label="收支描述"
+                    label="收支說明"
                     align='center'
                     min-width="180">
                 </el-table-column>
@@ -76,7 +111,7 @@
                     prop="income"
                     label="收入"
                     align='center'
-                    min-width="170"> 
+                    min-width="120"> 
                     <template #default="scope">
                         <div style="display: flex; align-items: center; justify-content: center;">
                         <span style="color:#00d053">{{ scope.row.income }}</span>
@@ -87,7 +122,7 @@
                     prop="expend"
                     label="支出"
                     align='center'
-                    min-width="170"> 
+                    min-width="120"> 
                     <template #default="scope">
                         <div style="display: flex; align-items: center; justify-content: center;">
                         <span style="color:#f56767">{{ scope.row.expend }}</span>
@@ -98,7 +133,7 @@
                     prop="cash"
                     label="帳戶餘額"
                     align='center'
-                    min-width="170"> 
+                    min-width="120"> 
                     <template #default="scope">
                         <div style="display: flex; align-items: center; justify-content: center;">
                         <span style="color:#4db3ff">{{ scope.row.cash }}</span>
@@ -109,7 +144,7 @@
                     prop="remark"
                     label="備註"
                     align='center'
-                    min-width="220">
+                    min-width="100">
                 </el-table-column>
                 <el-table-column 
                     prop="Operations"
@@ -121,13 +156,13 @@
                 >
                     <template #default="scope">
                         <el-button 
-                        size="small" 
+                        size="default" 
                         type="warning"
                         @click="handleEdit(scope.$index, scope.row)">
                         編輯
                         </el-button>
                         <el-button
-                        size="small"
+                        size="default"
                         type="danger"
                         @click="handleDelete(scope.$index, scope.row)"
                         >
@@ -142,9 +177,8 @@
                     <div class="pagination">
                         <el-pagination
                             v-model:current-page="paginations.page_index"
-                            v-model:page-size="pageSize4"
+                            v-model:page-size="paginations.page_size"
                             :page-sizes="paginations.page_sizes"
-                            :size="paginations.page_size"
                             :disabled="disabled"
                             :background="background"
                             :layout="paginations.layout"
@@ -158,189 +192,217 @@
         </div>
 
         <!-- <Dialog :dialog="dialog"></Dialog> -->
-         <Dialog :dialog="dialog"  :formData="formData" @update="getProfile"></Dialog>
+         <Dialog :dialog="dialog"  :formData="formData" @update="handleSearch"></Dialog>
     </div>
 </template>
 
-<script>
-import axios from "axios"; // vue 3
+<script setup>
+import { ref, reactive, computed, onMounted, onBeforeUnmount, nextTick  } from 'vue';
+import axios from 'axios';
+import { useStore } from 'vuex';
+import { ElMessage } from 'element-plus';
 import { Timer } from '@element-plus/icons-vue';
-import Dialog from "../components/Dialog";
-import { messageConfig } from "element-plus";
+import Dialog from '../components/Dialog.vue';
 
-export default {
-    name: "fundList",
-    components: {
-        Timer,
-        Dialog
-    },
-    data() {
-        return {
-            search_data: {
-                startTime: "",
-                endTime: "",
-                filterTableData: []
-            },
-            paginations: {
-              page_index: 1, // 當前位於哪頁
-              total: 0, // 總數
-              page_size: 5, // 一頁顯示多少條
-              page_sizes: [5, 10, 15, 20], // 每頁顯示多少條
-              layout: "total, sizes, prev, pager, next, jumper" // 翻頁屬性
-            },
-            tableData: [],
-            allTableData: [],
-            dialog: {
-                show: false,
-                title: "",
-                option: "edit"
-            },
-            formData: {
-                type: "",
-                describe: "",
-                income: "",
-                expend: "",
-                cash: "",
-                remark: "",
-                id: ""
-            },
-        };
-    },
-    computed: {
-        user() {
-            return this.$store.getters.user;
-        }
-    },
-    created() {
-        this.getProfile();
-    },
-    methods: {
-        getProfile() {
-        axios.get("/api/profiles")
-            .then(res => {
-                // this.tableData = res.data;
-                // console.log(this.tableData);
-                this.allTableData = res.data;
-                this.filterTableData = res.data;
-                // 設置分頁數據
-                this.setPaginations();
-            })
-            .catch(err => {
-                console.error("資料取得失敗", err);
-            });
-        },
-        setPaginations() {
-            // 分頁屬性設置
-            this.paginations.total = this.allTableData.length;
-            this.paginations.page_index = 1;
-            this.paginations.page_sizes = 5;
-            // 設置預設的分頁數據
-            this.tableData = this.allTableData.filter((item, index) => {
-                return index < this.paginations.page_size;
-            });
-        },
-        handleEdit(index, row) {
-            // console.log(this.dialog);
-            this.dialog = {
-                show: true,
-                title: "修改資金訊息",
-                option: "edit"
-            },
-            
-            this.formData = {
-                type: row.type,
-                describe: row.describe,
-                income: row.income,
-                expend: row.expend,
-                cash: row.cash,
-                remark: row.remark,
-                id: row._id
-            }
-        },
-        handleDelete(index, row) {
-            axios.delete(`/api/profiles/delete/${row._id}`).then(res => {
-                this.$message("刪除成功!");
-                this.getProfile();
-            });
-            // console.log(456);
-        },
-        handleAdd() {
-            // this.dialogVisible = true;
-            this.dialog = {
-                show: true,
-                title: "新增資金訊息",
-                option: "add"
-            },
+let resizeObserver = null;
+let refreshTimer = null;
 
-            this.formData = {
-                type: "",
-                describe: "",
-                income: "",
-                expend: "",
-                cash: "",
-                remark: "",
-                id: ""
-            };
-            // console.log(789);
-        },
-        handleSizeChange(page_size) {
-            // 切換 size 
-            this.paginations.page_index = 1;
-            this.paginations.page_size = page_size;
-            // 設置分頁數據
-            this.tableData = this.allTableData.filter((item, index) => {
-                return index < page_size;
-            });
-        },
-        handleCurrentChange(page) {
-            // 獲取當前頁
-            let index = this.paginations.page_size * (page - 1);
-            // 數據的總數
-            let nums = this.paginations.page_size * page;
-            // 容器
-            let tables = [];
+onMounted(() => {
+  window.addEventListener('resize', forceRecalculateLayout);
+  handleSearch();
 
-            for(let i = index; i < nums; i++) {
-                if(this.allTableData[i]) {
-                    tables.push(this.allTableData[i]);
-                }
+  // 新增自動刷新定時器（每 60 秒自動執行一次 handleSearch）
+  refreshTimer = setInterval(() => {
+    handleSearch();
+    console.log('✅ 自動刷新帳務資料');
+  }, 60000);
+});
 
-                this.tableData = tables;
-            }
-        },
-        handleSearch() {
-            // 篩選
-            if(!this.search_data.startTime || !this.search_data.endTime) {
-                this.$message({
-                    type: "warning",
-                    message: "請選擇時間區間"
-                });
-                this.getProfile();
-                return;
-            }
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', forceRecalculateLayout);
 
-            const sTime = this.search_data.startTime.getTime();
-            const eTime = this.search_data.endTime.getTime();
+  // 清除定時器，避免記憶體洩漏
+  if (refreshTimer) {
+    clearInterval(refreshTimer);
+  }
+});
 
-            this.allTableData = this.filterTableData.filter(item => {
-                // console.log(item);
-                let date = new Date(item.date);
-                let time = date.getTime();
-                return time >= sTime && time <= eTime;
-            });
-
-            // 分頁數據
-            this.setPaginations();
-        }
-    }
+const forceRecalculateLayout = () => {
+  nextTick(() => {
+    const tables = document.querySelectorAll('.el-table');
+    tables.forEach(table => {
+      table.__vueParentComponent?.exposed?.doLayout?.();
+    });
+    console.log('已重新計算 el-table 欄位寬度');
+  });
 };
 
-// const getProfile = () => {
-//     axios.get("/api/profiles")
-//           .then(res => {
-//               this.tableData = res.data;
-//           }).catch(err => console.log(err));
-// }
+// Vuex store
+const store = useStore();
+
+// 登入使用者資料 (取自 Vuex getter)
+const user = computed(() => store.getters.user);
+
+// 篩選時間與快取資料
+const search_data = reactive({
+  startTime: '',
+  endTime: '',
+  type: '',
+  filterTableData: [],
+});
+
+// 分頁設定
+const paginations = reactive({
+  page_index: 1,
+  total: 0,
+  page_size: 5,
+  page_sizes: [5, 10, 15, 20],
+  layout: 'total, sizes, prev, pager, next, jumper',
+});
+
+// 資料表格
+const tableData = ref([]);
+const allTableData = ref([]);
+
+// 彈窗控制與表單資料
+const dialog = reactive({
+  show: false,
+  title: '',
+  option: 'edit',
+});
+
+const formData = reactive({
+  type: '',
+  describe: '',
+  income: '',
+  expend: '',
+  cash: '',
+  remark: '',
+  id: '',
+});
+
+// 取得後端資料
+const getProfile = () => {
+  axios.get('/api/profiles')
+    .then(res => {
+      allTableData.value = res.data;
+      search_data.filterTableData = res.data;
+      setPaginations();
+    })
+    .catch(err => {
+      console.error('資料取得失敗', err);
+    });
+};
+
+// 設定分頁初始資料
+const setPaginations = () => {
+  paginations.total = allTableData.value.length;
+  paginations.page_index = 1;
+  paginations.page_size = 5;
+  tableData.value = allTableData.value.slice(0, paginations.page_size);
+};
+
+// 編輯資料
+const handleEdit = (index, row) => {
+  dialog.show = true;
+  dialog.title = '修改資金訊息';
+  dialog.option = 'edit';
+
+  Object.assign(formData, {
+    type: row.type,
+    describe: row.describe,
+    income: row.income,
+    expend: row.expend,
+    cash: row.cash,
+    remark: row.remark,
+    id: row._id,
+  });
+};
+
+// 刪除資料
+const handleDelete = (index, row) => {
+  axios.delete(`/api/profiles/delete/${row._id}`).then(res => {
+    ElMessage.success('刪除成功!');
+    handleSearch();
+  });
+};
+
+// 新增資料
+const handleAdd = () => {
+  dialog.show = true;
+  dialog.title = '新增資金訊息';
+  dialog.option = 'add';
+
+  Object.assign(formData, {
+    type: '',
+    describe: '',
+    income: '',
+    expend: '',
+    cash: '',
+    remark: '',
+    id: '',
+  });
+};
+
+// 每頁筆數變更
+const handleSizeChange = (page_size) => {
+  paginations.page_index = 1;
+  paginations.page_size = page_size;
+  tableData.value = allTableData.value.slice(0, page_size);
+};
+
+// 換頁
+const handleCurrentChange = (page) => {
+  const start = paginations.page_size * (page - 1);
+  const end = start + paginations.page_size;
+  tableData.value = allTableData.value.slice(start, end);
+};
+
+// 篩選功能
+const handleSearch = () => {
+  // const hasTimeRange = search_data.startTime && search_data.endTime;
+  // const sTime = hasTimeRange ? new Date(search_data.startTime).getTime() : null;
+  // const eTime = hasTimeRange ? new Date(search_data.endTime).getTime() : null;
+
+  // allTableData.value = search_data.filterTableData.filter(item => {
+  //   const itemTime = new Date(item.date).getTime();
+  //   const matchTime = hasTimeRange ? (itemTime >= sTime && itemTime <= eTime) : true;
+  //   const matchType = search_data.type ? item.type === search_data.type : true;
+  //   return matchTime && matchType;
+  // });
+  const params = {};
+
+  if (search_data.startTime) {
+    params.startTime = search_data.startTime;
+  }
+  if (search_data.endTime) {
+    params.endTime = search_data.endTime;
+  }
+  if (search_data.type && search_data.type !== '全部') {
+    params.type = search_data.type;
+  }
+
+  axios.get('/api/profiles/search', { params })
+    .then(res => {
+      allTableData.value = res.data;
+      search_data.filterTableData = res.data;
+      setPaginations();
+    })
+    .catch(err => {
+      console.error('查詢失敗', err);
+    });
+
+  setPaginations();
+};
+
+// 還原全部
+const handleReset = () => {
+  search_data.startTime = '';
+  search_data.endTime = '';
+  search_data.type = '';
+  // allTableData.value = search_data.filterTableData;
+  handleSearch();
+};
 </script>
 
 <style scoped>
@@ -351,7 +413,19 @@ export default {
     box-sizing: border-box;
 }
 
-.btnRight {
+.table_container {
+  overflow-x: auto;
+}
+
+.selectTime, .selectItem{
+    float: left;
+}
+
+.selectBtn {
+    float: left;
+}
+
+.btnAdd {
     float: right;
 }
 
@@ -359,5 +433,24 @@ export default {
     display: flex;
     justify-content: flex-end;
     margin-top: 10px;
+}
+
+::v-deep(.el-form-item__label) {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+::v-deep(.el-select .el-input__inner) {
+  color: #000 !important;
+  font-size: 15px;
+}
+
+::v-deep(.el-form-item__label) {
+  font-size: 15px;
+}
+
+::v-deep(.el-button) {
+  font-size: 15px;
 }
 </style>

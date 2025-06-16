@@ -17,7 +17,7 @@ const routes = [
   },
   {
     path: '/index',
-    redirect: 'index',
+    // redirect: '/index',
     component: Index,
     children: [
       { path: "", component: Home },
@@ -49,7 +49,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory(import.meta.env.VITE_APP_BASE_URL),
   routes
 })
 
