@@ -21,7 +21,7 @@ process.on('uncaughtException', function (err) {
 
 // 載入路由模組
 const users = require("./routes/api/users");
-const profiles = require("./routes/api/profiles");
+const animesongs = require("./routes/api/animesongs");
 
 // 資料庫設定
 const db = require("./config/keys").mongoURI;
@@ -51,8 +51,8 @@ require("./config/passport.js")(passport);
 
 // 掛載 API 路由
 app.use("/api/users", users);
-app.use("/api/profiles", profiles);
-// console.log("routes 已掛載 /api/users, /api/profiles");
+app.use("/api/animesongs", animesongs);
+// console.log("routes 已掛載 /api/users, /api/animesongs");
 
 // 部署時提供靜態資源
 if (process.env.NODE_ENV === "production") {

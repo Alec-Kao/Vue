@@ -1,7 +1,7 @@
 {
-  "name": "app",
+  "name": "anime-search-system",
   "version": "1.0.0",
-  "description": "restful api",
+  "description": "動漫查詢系統 RESTful API",
   "main": "server.js",
   "scripts": {
     "client-install": "npm install --prefix client",

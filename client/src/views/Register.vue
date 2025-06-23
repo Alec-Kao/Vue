@@ -2,7 +2,7 @@
     <div class="register">
         <section class="form_container">
             <div class="manage_tip">
-                <span class="title">雋喆在線後台管理系統-練習</span>
+                <span class="title">動漫線上查詢系統</span>
                 <el-form :rules="rules" ref="registerForm" :model="registerUser" class="registerForm" label-width="80px">
                     <el-form-item label="帳號名稱" prop="name">
                         <el-input v-model="registerUser.name" placeholder="請輸入帳號"></el-input>
@@ -19,7 +19,7 @@
                     <el-form-item label="選擇身分" prop="identity">
                         <el-select v-model="registerUser.identity" placeholder="請選擇身分">
                             <el-option label="管理員" value="manager"></el-option>
-                            <el-option label="員工" value="employee"></el-option>
+                            <el-option label="會員" value="employee"></el-option>
                         </el-select>
                     </el-form-item>
 
@@ -108,7 +108,6 @@ const submitForm = () => {
 <style scoped>
 .register {
     position: relative;
-    /*影片上說用 relative，但是會沒畫面，我這裡用 absolute 可以就先用這個*/
     width: 100%;
     height: 100%;
     background: url(../assets/bg.jpg) no-repeat center center;

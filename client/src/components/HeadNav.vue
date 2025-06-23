@@ -3,7 +3,7 @@
         <el-row class="header-inner">
             <div class="logo-container">
                 <img src="../assets/logo.png" class="logo" alt="">
-                <span class="title">雋喆線上後台管理系統</span>
+                <span class="title">動漫線上查詢系統</span>
             </div>
             <div class="userinfo">
                 <img :src="localUser.avatar" class="avatar" alt="">
@@ -40,14 +40,13 @@ import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import avatarImg from '@/assets/avatar.png';
 
-// 本地預設資料（原先 const user）
+// 本地預設資料
 const localUser = ref({
   avatar: avatarImg,
   comename: '歡迎',
   avatarname: 'Kao Alec'
 })
 
-// 取代原本 export default 裡的 computed user（避免與 localUser 衝突）
 const store = useStore()
 const router = useRouter()
 const user = computed(() => store.getters.user)

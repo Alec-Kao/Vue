@@ -13,39 +13,46 @@
                 ref="formRef"
                 :model="formData"
                 :rules="form_rules"
-                label-width="120px"
+                label-width="150px"
                 style="margin: 10px; width: auto;"
               >
-                <el-form-item label="收支項目:">
-                  <el-select v-model="formData.type" placeholder="收支項目">
+                <el-form-item prop='describe' label="動漫歌曲名稱:">
+                    <el-input type="text" v-model="formData.describe"></el-input>
+                </el-form-item>
+
+                <el-form-item prop='workName' label="對應動漫作品:">
+                  <el-input type="text" v-model="formData.workName"></el-input>
+                </el-form-item>
+
+                <el-form-item prop='type' label="動漫歌曲類型:">
+                  <el-select v-model="formData.type" placeholder="請選擇動漫歌曲類型">
                     <el-option 
                       v-for="(formtype, index) in format_type_list" 
                       :key="index" 
                       :label="formtype"
                       :value="formtype">
-
                     </el-option>
                   </el-select>
                 </el-form-item>
 
-                <el-form-item prop='describe' label="收支說明">
-                    <el-input type="text" v-model="formData.describe"></el-input>
+                <el-form-item prop='category' label="類型:">
+                  <el-select v-model="formData.category" placeholder="請選擇類型">
+                    <el-option label="動畫" value="動畫"></el-option>
+                    <el-option label="遊戲" value="遊戲"></el-option>
+                    <el-option label="其他" value="其他"></el-option>
+                  </el-select>
                 </el-form-item>
 
-                <el-form-item prop='income' label="收入:">
-                  <el-input type="number" v-model="formData.income"></el-input>
+                <el-form-item prop='rating' label="評分:">
+                  <el-input type="number" v-model="formData.rating"></el-input>
                 </el-form-item>
 
-                <el-form-item prop='expend' label="支出:">
-                  <el-input type="number" v-model="formData.expend"></el-input>
+                <el-form-item label="歌手或者表演團體:">
+                  <el-input type="text" v-model="formData.singerOrGroup"></el-input>
                 </el-form-item>
 
-                <el-form-item prop='cash' label="帳戶餘額:">
-                  <el-input type="number" v-model="formData.cash"></el-input>
-                </el-form-item>
-
-                <el-form-item label="備註:">
-                  <el-input type="text" v-model="formData.remark"></el-input>
+                <el-form-item prop='songUrl' label="音樂網址:">
+                  <el-input type="text" v-model="formData.songUrl"></el-input>
                 </el-form-item>
 
                 <el-form-item  class="text_right">
@@ -77,28 +84,45 @@ const emit = defineEmits(['update'])
 // 表單 Ref
 const formRef = ref(null)
 
+// 驗證函式
+const validateRating = (rule, value, callback) => {
+  if (value !== '' && value !== null && Number(value) > 10) {
+    callback(new Error('評分滿分為10分'));
+  } else if (value !== '' && value !== null && Number(value) < 0) {
+    callback(new Error('評分不能為負數'));
+  } else {
+    callback();
+  }
+};
+
 // 資料與驗證規則
 const format_type_list = [
-  '提領',
-  '提領手續費',
-  '儲值',
-  '優惠券',
-  '儲值禮券',
-  '轉帳'
+  'J-POP',
+  '搖滾',
+  '抒情',
+  '古典',
+  '電子'
 ]
 
 const form_rules = {
   describe: [
-    { required: true, message: '收支描述不能為空' }
+    { required: true, message: '動漫歌曲名稱不能為空' }
   ],
-  income: [
-    { required: true, message: '收入不能為空!', trigger: 'blur' }
+  rating: [
+    { required: true, message: '評分不能為空!', trigger: 'blur' },
+    { validator: validateRating, trigger: 'blur' }
   ],
-  expend: [
-    { required: true, message: '支出不能為空!', trigger: 'blur' }
+  workName: [
+    { required: true, message: '對應動漫作品不能為空', trigger: 'blur' }
   ],
-  cash: [
-    { required: true, message: '帳戶不能為空!', trigger: 'blur' }
+  type: [
+    { required: true, message: '動漫歌曲類型不能為空', trigger: 'blur' }
+  ],
+  category: [
+    { required: true, message: '類型不能為空', trigger: 'blur' }
+  ],
+  songUrl: [
+    { required: true, message: '音樂網址不能為空', trigger: 'blur' }
   ]
 }
 
@@ -106,15 +130,12 @@ const form_rules = {
 const onSubmit = () => {
   formRef.value.validate(valid => {
     if (valid) {
-      let url = ''
-      if (dialog.option === 'add')
-        url = 'add'
-      else
-        url = `edit/${formData.id}`
+      const isEdit = dialog.option === 'edit';
+      const url = isEdit ? `edit/${formData.id}` : 'add';
   
-      axios.post(`/api/profiles/${url}`, formData)
+      axios.post(`/api/animesongs/${url}`, formData)
         .then(() => {
-          ElMessage.success('新增數據成功')
+          ElMessage.success(isEdit ? '數據更新成功' : '新增數據成功');
           dialog.show = false
           emit('update')
         })
@@ -126,9 +147,11 @@ watch(
   () => dialog.show,
   (newVal) => {
     if (newVal) {
-      // 如果使用者沒有指定，預設選擇第一項
       if (!formData.type) {
         formData.type = format_type_list[0]
+      }
+      if (dialog.option === 'add' && !formData.category) {
+        formData.category = '動畫';
       }
     }
   }

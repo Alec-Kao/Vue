@@ -6,7 +6,7 @@ import Login from '../views/Login.vue'
 import NotFound from '../views/404.vue'
 import Home from '../views/Home.vue'
 import InfoShow from '../views/InfoShow.vue'
-import FundList from '../views/FundList.vue'
+import AnimeSongList from '../views/AnimeSongList.vue'
 // import { nextTick } from 'process'
 import { nextTick } from 'vue'
 
@@ -23,14 +23,9 @@ const routes = [
       { path: "", component: Home },
       { path: "/home", name: "home", component: Home },
       { path: "/infoshow", name: "infoshow", component: InfoShow },
-      { path: "/fundlist", name: "fundlist", component: FundList }
+      { path: "/animesonglist", name: "animesonglist", component: AnimeSongList }
     ]
   },
-  // {
-  //   path: '/index',
-  //   name: 'index',
-  //   component: Index
-  // },
   {
     path: '/register',
     name: 'register',

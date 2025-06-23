@@ -13,9 +13,7 @@ function startLoading() {
 }
 
 function endLoading() {
-    setTimeout(() => {
-        loading.close();
-    }); // 延遲 300ms，避免畫面太快看不到動畫
+    loading.close();
 }
 
 // 攔截請求

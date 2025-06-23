@@ -1,8 +1,8 @@
 <template>
     <div class="home">
         <div class="container">
-            <h1 class="title">雋喆在縣</h1>
-            <p class="lead"> 練習假設: 線上課程 </p>
+            <h1 class="title">動漫歌曲列表</h1>
+            <p class="lead">聆聽觸動靈魂的旋律</p>
         </div>
     </div>
 </template>

@@ -12,8 +12,6 @@
       >
         <!-- 首頁 -->
         <el-menu-item index="/home">
-          <!-- <i class="fa fa-margin fa-server"></i> -->
-          <!-- <span>首頁</span> -->
           <el-icon><House /></el-icon>
           <span>首頁</span>
         </el-menu-item>
@@ -23,7 +21,6 @@
         <template v-for="item in items" :key="item.path">
           <el-sub-menu :index="'/' + item.path">
             <template #title>
-              <!-- <i :class="'fa fa-margin ' + item.icon"></i> -->
               <el-icon><component :is="item.iconComponent" /></el-icon>
               <span>{{ item.name }}</span>
             </template>
@@ -44,25 +41,25 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { House, Wallet, User } from '@element-plus/icons-vue'
+import { House, User, Headset } from '@element-plus/icons-vue'
 
 const items = ref([
   {
-    icon: 'fa-money',
-    name: '帳務管理',
-    path: 'fund',
-    iconComponent: Wallet,
+    icon: 'fa-music',
+    name: '動漫歌曲管理',
+    path: 'animesong',
+    iconComponent: Headset,
     children: [
-      { path: 'fundlist', name: '帳務明細' }
+      { path: 'animesonglist', name: '動漫歌曲列表' }
     ]
   },
   {
     icon: 'fa-asterisk',
-    name: '帳戶資訊',
+    name: '訊息管理',
     path: 'info',
     iconComponent: User,
     children: [
-      { path: 'infoshow', name: '	個人資訊' }
+      { path: 'infoshow', name: '個人資訊' }
     ]
   }
 ])

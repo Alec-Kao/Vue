@@ -2,7 +2,7 @@
     <div class="login">
         <section class="form_container">
             <div class="manage_tip">
-                <span class="title">雋喆在線後台管理系統-練習</span>
+                <span class="title">動漫線上查詢系統</span>
                 <el-form :rules="rules" ref="loginForm" :model="loginUser" class="loginForm" label-width="80px">
                     <el-form-item label="電子郵件" prop="email">
                         <el-input v-model="loginUser.email" placeholder="請輸入email"></el-input>
