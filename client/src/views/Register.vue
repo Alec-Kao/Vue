@@ -2,7 +2,7 @@
     <div class="register">
         <section class="form_container">
             <div class="manage_tip">
-                <span class="title">動漫線上查詢系統</span>
+                <span class="title">動漫歌曲線上查詢系統</span>
                 <el-form :rules="rules" ref="registerForm" :model="registerUser" class="registerForm" label-width="80px">
                     <el-form-item label="帳號名稱" prop="name">
                         <el-input v-model="registerUser.name" placeholder="請輸入帳號"></el-input>

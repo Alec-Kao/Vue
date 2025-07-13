@@ -55,7 +55,7 @@ const items = ref([
   },
   {
     icon: 'fa-asterisk',
-    name: '訊息管理',
+    name: '帳號管理',
     path: 'info',
     iconComponent: User,
     children: [

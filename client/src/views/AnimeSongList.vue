@@ -1,15 +1,13 @@
 <template>
     <div class="fillContainer">
-        <div>
-            <el-form :inline="true">
-              <el-row style="flex-wrap: wrap;">
+        <div>         
+            <el-form :inline="true" res="add_data"  label-width="auto"  label-position="left" :model="search_data">
+                <!-- 篩選 -->
+                <el-row style="flex-wrap: wrap;">
                   <el-col>
                     <el-form-item class="selectText" label="查詢方法，可為空:"></el-form-item>
                   </el-col>
                 </el-row>
-            </el-form>
-            <el-form :inline="true" res="add_data"  label-width="auto"  label-position="left" :model="search_data">
-                <!-- 篩選 -->
                 <el-row style="flex-wrap: wrap;">
                   <el-col>
                     <el-form-item label="時間:" class="selectTime">
@@ -161,9 +159,7 @@
                     align='center'
                     min-width="80"> 
                     <template #default="scope">
-                        <div style="display: flex; align-items: center; justify-content: center;">
-                        <span style="color:#00d053">{{ scope.row.rating }}</span>
-                        </div>
+                        <span>{{ scope.row.rating }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -177,7 +173,7 @@
                     align='center'
                     min-width="100">
                     <template #default="scope">
-                        <a :href="scope.row.songUrl" target="_blank" style="color: #409EFF; text-decoration: none;">Listen</a>
+                        <a :href="scope.row.songUrl" target="_blank">Listen</a>
                     </template>
                 </el-table-column>
                 <el-table-column 
@@ -424,7 +420,8 @@ const store = useStore();
 }
 
 .table_container {
-  overflow-x: auto;
+    width: 100%;
+    margin-top: 16px;
 }
 
 .selectTime, .selectItem{
@@ -442,23 +439,21 @@ const store = useStore();
 .pagination {
     display: flex;
     justify-content: flex-end;
-    margin-top: 10px;
+    margin-top: 20px;
 }
 
 ::v-deep(.el-form-item__label) {
   font-size: 16px;
-}
-
-::v-deep(.selectText .el-form-item__label) {
-  font-size: 18px;
   font-weight: bold;
   color: #333;
 }
 
-
-
 ::v-deep(.el-select .el-input__inner) {
   color: #000 !important;
+  font-size: 15px;
+}
+
+::v-deep(.el-form-item__label) {
   font-size: 15px;
 }
 
