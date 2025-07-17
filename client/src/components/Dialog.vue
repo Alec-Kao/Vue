@@ -39,7 +39,8 @@
                   <el-select v-model="formData.category" placeholder="請選擇類型">
                     <el-option label="動畫" value="動畫"></el-option>
                     <el-option label="遊戲" value="遊戲"></el-option>
-                    <el-option label="其他" value="其他"></el-option>
+                    <el-option label="電影" value="電影"></el-option>
+                    <el-option label="其它" value="其它"></el-option>
                   </el-select>
                 </el-form-item>
 

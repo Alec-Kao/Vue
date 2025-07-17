@@ -43,8 +43,20 @@
                 </el-row>
                 <el-row style="flex-wrap: wrap;">
                   <el-col>
-                    <el-form-item label="類型:">
+                    <!-- <el-form-item label="類型:">
                       <el-input v-model="search_data.category" placeholder="請輸入類型" clearable />
+                    </el-form-item> -->
+                    <el-form-item label="類型:" class="selectItem">
+                      <el-select v-model="search_data.category" 
+                        placeholder="請選擇類型" 
+                        clearable
+                        style="width: 170px"
+                      >
+                        <el-option label="動畫" :value="'動畫'" />
+                        <el-option label="遊戲" :value="'遊戲'" />
+                        <el-option label="電影" :value="'電影'" />
+                        <el-option label="其它" :value="'其它'" />
+                      </el-select>
                     </el-form-item>
                   </el-col>
                 </el-row>
@@ -98,7 +110,7 @@
                 max-height="450" 
                 border
                 :default-sort = "{prop: 'date', order: 'descending'}"
-                style="width: 100%"
+                style="width: auto"
             >
                  <!-- 自訂空狀態 -->
                 <template #empty>
@@ -415,13 +427,19 @@ const store = useStore();
 .fillContainer {
     width: 100%;
     height: 100%;
-    padding: 16px;
+    padding: 20px;
     box-sizing: border-box;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
 }
 
 .table_container {
-    width: 100%;
-    margin-top: 16px;
+    margin-top: 20px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+    overflow-x: auto;
 }
 
 .selectTime, .selectItem{
@@ -442,22 +460,130 @@ const store = useStore();
     margin-top: 20px;
 }
 
+/* 表單容器美化 */
+::v-deep(.el-form) {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 20px;
+}
+
+/* 輸入框美化 */
+::v-deep(.el-input__wrapper) {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+}
+
+::v-deep(.el-input__wrapper:hover) {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+::v-deep(.el-input__wrapper.is-focus) {
+    box-shadow: 0 4px 12px rgba(64, 158, 255, 0.2);
+}
+
+/* 選擇器美化 */
+::v-deep(.el-select .el-input__wrapper) {
+    border-radius: 8px;
+}
+
+/* 按鈕美化 */
+::v-deep(.el-button) {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+::v-deep(.el-button:hover) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+::v-deep(.el-button--primary) {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+::v-deep(.el-button--warning) {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border: none;
+}
+
+::v-deep(.el-button--danger) {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    border: none;
+}
+
+/* 表格美化 */
+
+::v-deep(.el-table) {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    min-width: 1200px;
+}
+
+
+::v-deep(.el-table th) {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    font-weight: 600;
+    border: none;
+}
+
+
+::v-deep(.el-table tr:hover > td) {
+    background-color: #f8f9ff !important;
+}
+
+
+::v-deep(.el-table td) {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* 分頁美化 */
+::v-deep(.el-pagination) {
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+::v-deep(.el-pagination .el-pager li) {
+    border-radius: 6px;
+    margin: 0 2px;
+}
+
+::v-deep(.el-pagination .el-pager li.is-active) {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+}
+
+/* 標籤美化 */
 ::v-deep(.el-form-item__label) {
-  font-size: 16px;
-  font-weight: bold;
-  color: #333;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2c3e50;
 }
 
 ::v-deep(.el-select .el-input__inner) {
-  color: #000 !important;
-  font-size: 15px;
+    color: #2c3e50 !important;
+    font-size: 14px;
 }
 
-::v-deep(.el-form-item__label) {
-  font-size: 15px;
+/* 日期選擇器美化 */
+::v-deep(.el-date-editor) {
+    border-radius: 8px;
 }
 
-::v-deep(.el-button) {
-  font-size: 15px;
+/* 鏈接美化 */
+::v-deep(a) {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
 }
 </style>
