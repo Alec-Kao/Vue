@@ -23,27 +23,48 @@ export default {
 import HelloWorld from '@/components/HelloWorld.vue'
 </script> -->
 
-<style scoped>
+<style lang="scss" scoped>
+@import '@/assets/scss/variables';
+@import '@/assets/scss/mixins';
+
 .home {
   width: 100%;
   height: 100%;
-  background: url(../assets/showcase.png) no-repeat;
-  background-size: 100% 100%;
-}
-.container {
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  padding-top: 100px;
-  background-color: rgba(0, 0, 0, 0.7);
-  text-align: center;
-  color: white;
-}
-.title {
-  font-size: 30px;
-}
-.lead {
-  margin-top: 50px;
-  font-size: 22px;
+  background: url(../assets/showcase.png) no-repeat center center;
+  background-size: cover;
+  position: relative;
+  
+  .container {
+    @include flex-column-center;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding-top: 100px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    
+    .title {
+      font-size: $font-size-large + 12px;
+      font-weight: bold;
+      margin-bottom: $spacing-lg;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      
+      @include mobile {
+        font-size: $font-size-large + 4px;
+      }
+    }
+    
+    .lead {
+      margin-top: $spacing-xl + 18px;
+      font-size: $font-size-large + 4px;
+      opacity: 0.9;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+      
+      @include mobile {
+        font-size: $font-size-medium;
+        margin-top: $spacing-lg;
+      }
+    }
+  }
 }
 </style>

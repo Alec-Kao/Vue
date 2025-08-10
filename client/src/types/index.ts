@@ -28,6 +28,17 @@ export interface AnimeSong {
   date?: string;
 }
 
+// 收藏清單類型
+export interface PlayList {
+  _id?: string;
+  name: string;
+  description?: string;
+  userId: string;
+  songs: string[] | AnimeSong[];
+  isDefault?: boolean;
+  date?: string;
+}
+
 // 路由守衛類型
 export interface RouteGuard {
   to: any;

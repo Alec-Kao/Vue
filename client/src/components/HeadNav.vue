@@ -6,11 +6,10 @@
                 <span class="title">動漫線上查詢系統</span>
             </div>
             <div class="userinfo">
-                <img :src="localUser.avatar" class="avatar" alt="">
-                <!-- <img :src="user.avatar " class="avatar" alt=""> -->
+                <img :src="user.avatar || localUser.avatar" class="avatar" alt="">
                 <div class="welcome">
                     <p class="name comename">歡迎</p>
-                    <p class="name avatarname">{{ user.name }}</p>
+                    <p class="name avatarname">{{ user.name || localUser.avatarname }}</p>
                 </div>
                 <span class="username">
                     <!-- 下拉式選單 -->
@@ -80,50 +79,54 @@ const logout = () => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import '@/assets/scss/variables';
+@import '@/assets/scss/mixins';
+
 .head-nav {
   width: 100%;
   height: 60px;
   min-width: 300px;
-  padding: 5px;
-  background: #324057;
-  color: #fff;
-  border-bottom: 1px solid #1f2d3d;
+  padding: $spacing-xs;
+  background: #324057; // 保持原設計顏色
+  color: white;
+  border-bottom: 1px solid darken(#324057, 10%);
   min-width: 380px; /* 最小顯示寬度 */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .header-inner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  @include flex-between;
   width: 100%;
 }
 
 .logo-container {
-  display: flex;
-  align-items: center;
+  @include flex-between;
   margin-right: auto;
 }
 
 .logo {
   height: 50px;
   width: 50px;
-  margin-right: 5px;
+  margin-right: $spacing-xs;
 }
 
 .title {
-  font-size: 22px;
-  font-family: "Microsoft YaHei";
+  font-size: $font-size-large + 4px;
+  font-family: "Microsoft JhengHei", "Microsoft YaHei";
   letter-spacing: 3px;
+  
+  @include mobile {
+    font-size: $font-size-large;
+  }
 }
 
 .userinfo {
-  display: flex;
-  align-items: center;
+  @include flex-between;
   flex-shrink: 0;
   max-width: 250px;
   overflow: hidden;
-  margin-right: 15px;
+  margin-right: $spacing-md;
 }
 
 .avatar {
@@ -139,26 +142,19 @@ const logout = () => {
 .name {
   line-height: 20px;
   text-align: center;
-  font-size: 14px;
+  font-size: $font-size-base;
 }
 
 .comename {
-  font-size: 12px;
+  font-size: $font-size-extra-small;
 }
 
 .avatarname {
-  color: #409eff;
+  color: $primary-color;
   font-weight: bold;
 }
 
 .el-dropdown {
-  color: #fff;
-}
-
-/* 小型螢幕標題字體大小 */
-@media (max-width: 600px) {
-  .title {
-    font-size: 18px;
-  }
+  color: white;
 }
 </style>

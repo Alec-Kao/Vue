@@ -37,4 +37,4 @@ const AnimeSongSchema = new Schema({
     }
 })
 
-module.exports = AnimeSong = mongoose.model("animesong", AnimeSongSchema)
+module.exports = AnimeSong = mongoose.model("animesongs", AnimeSongSchema)

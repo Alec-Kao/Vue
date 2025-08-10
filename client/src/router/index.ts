@@ -6,6 +6,7 @@ import NotFound from '../views/404.vue'
 import Home from '../views/Home.vue'
 import InfoShow from '../views/InfoShow.vue'
 import AnimeSongList from '../views/AnimeSongList.vue'
+import FavoritesList from '../views/FavoritesList.vue'
 import { nextTick } from 'vue'
 
 /// <reference types="vite/client" />
@@ -22,7 +23,8 @@ const routes: Array<RouteRecordRaw> = [
       { path: "", component: Home },
       { path: "/home", name: "home", component: Home },
       { path: "/infoshow", name: "infoshow", component: InfoShow },
-      { path: "/animesonglist", name: "animesonglist", component: AnimeSongList }
+      { path: "/animesonglist", name: "animesonglist", component: AnimeSongList },
+      { path: "/favoriteslist", name: "favoriteslist", component: FavoritesList }
     ]
   },
   {

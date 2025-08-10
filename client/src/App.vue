@@ -8,12 +8,16 @@
   <router-view></router-view>
 </template>
 
-<style>
+<style lang="scss">
+@import 'src/assets/scss/variables';
+@import 'src/assets/scss/mixins';
+
 html, body {
   width: max-content;
   height: 100%;
   min-width: 100%;
   margin: 0;
+  font-family: 'Helvetica Neue', Helvetica, 'PingFang TC', 'Microsoft JhengHei', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
 }
 
 #app {
@@ -21,18 +25,23 @@ html, body {
   height: 100%;
 }
 
-
 nav {
-  padding: 30px;
-}
-
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
+  padding: $spacing-xl;
+  
+  a {
+    font-weight: bold;
+    color: $text-primary;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    
+    &:hover {
+      color: $primary-color;
+    }
+    
+    &.router-link-exact-active {
+      color: $success-color;
+    }
+  }
 }
 </style>
 

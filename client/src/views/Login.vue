@@ -76,7 +76,10 @@ const submitForm = () => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import '@/assets/scss/variables';
+@import '@/assets/scss/mixins';
+
 .login {
     position: relative;
     width: 100%;
@@ -92,43 +95,44 @@ const submitForm = () => {
     top: 20%;
     left: 50%;
     transform: translateX(-50%);
-    border-radius: 5px;
+    border-radius: $border-radius-base;
     text-align: center;
 }
 
 .title {
-    font-family: "Microsoft YaHei";
+    font-family: "Microsoft JhengHei", "Microsoft YaHei";
     font-weight: bold;
     font-size: 26px;
-    color: #fff;
-}
-
-@media (max-width: 600px) {
-    .title {
+    color: white;
+    
+    @include mobile {
         font-size: 20px;
     }
 }
 
 .loginForm {
-    margin-top: 20px;
-    background-color: #fff;
-    padding: 20px 40px;
-    border-radius: 5px;
-    box-shadow: 0px 5px 10px #ccc;
+    @include card($spacing-lg);
+    margin-top: $spacing-lg;
 }
 
 .submit_btn {
+    @include gradient-button($primary-color, darken($primary-color, 10%));
     width: 100%;
     max-width: 300px;
 }
 
 .tiparea {
     text-align: right;
-    font-size: 12px;
-    color: #333;
-}
-
-.tiparea p a {
-    color: #409eff;
+    font-size: $font-size-extra-small;
+    color: $text-primary;
+    
+    p a {
+        color: $primary-color;
+        text-decoration: none;
+        
+        &:hover {
+            text-decoration: underline;
+        }
+    }
 }
 </style>

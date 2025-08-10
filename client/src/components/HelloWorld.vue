@@ -35,19 +35,35 @@
   defineProps<{ msg: string }>() 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import '@/assets/scss/variables';
+@import '@/assets/scss/mixins';
+
 h3 {
-  margin: 40px 0 0;
+  margin: $spacing-xl + 8px 0 0;
+  color: $text-primary;
+  font-size: $font-size-large;
 }
+
 ul {
   list-style-type: none;
   padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+  
+  li {
+    display: inline-block;
+    margin: 0 $spacing-sm + 2px;
+    
+    a {
+      color: $success-color;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        color: darken($success-color, 10%);
+        text-decoration: underline;
+      }
+    }
+  }
 }
 </style>

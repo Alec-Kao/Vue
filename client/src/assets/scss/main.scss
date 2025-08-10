@@ -1,0 +1,78 @@
+// 引入變數
+@import 'variables';
+
+// 引入 mixins
+@import 'mixins';
+
+// 引入重置樣式
+@import 'reset';
+
+// 引入 Element Plus 主題覆蓋
+@import 'element-plus-theme';
+
+
+
+// 全域樣式
+body {
+    font-family: 'Helvetica Neue', Helvetica, 'PingFang TC', 'Microsoft JhengHei', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
+    color: $text-primary;
+    background-color: $background-light;
+}
+
+// 通用工具類
+.text-center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.clearfix::after {
+    content: '';
+    display: table;
+    clear: both;
+}
+
+// 響應式間距工具類
+@each $name, $size in (xs: $spacing-xs, sm: $spacing-sm, md: $spacing-md, lg: $spacing-lg, xl: $spacing-xl) {
+    .m-#{$name} { margin: $size; }
+    .mt-#{$name} { margin-top: $size; }
+    .mr-#{$name} { margin-right: $size; }
+    .mb-#{$name} { margin-bottom: $size; }
+    .ml-#{$name} { margin-left: $size; }
+    
+    .p-#{$name} { padding: $size; }
+    .pt-#{$name} { padding-top: $size; }
+    .pr-#{$name} { padding-right: $size; }
+    .pb-#{$name} { padding-bottom: $size; }
+    .pl-#{$name} { padding-left: $size; }
+}
+
+// Flexbox 工具類
+.d-flex { display: flex; }
+.flex-column { flex-direction: column; }
+.flex-wrap { flex-wrap: wrap; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.justify-around { justify-content: space-around; }
+.align-center { align-items: center; }
+.align-start { align-items: flex-start; }
+.align-end { align-items: flex-end; }
+
+// 響應式顯示類
+.d-mobile-none {
+    @include mobile {
+        display: none !important;
+    }
+}
+
+.d-desktop-none {
+    @include desktop {
+        display: none !important;
+    }
+} 

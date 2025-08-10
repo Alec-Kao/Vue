@@ -24,7 +24,10 @@
                     </el-form-item>
 
                     <el-form-item>
-                        <el-button type="primary" class="submit_btn" @click="submitForm">註冊</el-button>
+                        <div class="button-row">
+                            <el-button type="primary" class="submit_btn" @click="submitForm">註冊</el-button>
+                            <el-button type="default" class="back_btn" @click="goToLogin">返回登入</el-button>
+                        </div>
                     </el-form-item>
                 </el-form>
             </div>
@@ -81,6 +84,10 @@ const rules: FormRules = {
   ]
 }
 
+const goToLogin = () => {
+  router.push("/login");
+}
+
 const submitForm = () => {
   if (!registerForm.value) return
   registerForm.value.validate((valid) => {
@@ -88,24 +95,34 @@ const submitForm = () => {
         // this.$axios.post("api/users/register");
         axios.post("/api/users/register", registerUser).then( res => {
             // 註冊成功
-            // 以下為 Vue 2
-            // this.$message({
-            //     message: "帳號註冊成功",
-            //     type: 'success' 
-            // })
             ElMessage({
                 message: '帳號註冊成功',
                 type: 'success'
             });
+            router.push("/login");
+        }).catch(error => {
+            // 處理註冊失敗的情況
+            if (error.response && error.response.status === 400) {
+                ElMessage({
+                    message: error.response.data || '帳號已被註冊',
+                    type: 'error'
+                });
+            } else {
+                ElMessage({
+                    message: '註冊失敗，請稍後再試',
+                    type: 'error'
+                });
+            }
         });
-        
-        router.push("/login");
     } 
   })
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import '@/assets/scss/variables';
+@import '@/assets/scss/mixins';
+
 .register {
     position: relative;
     width: 100%;
@@ -122,27 +139,42 @@ const submitForm = () => {
     top: 20%;
     left: 50%;
     transform: translateX(-50%);
-    border-radius: 5px;
+    border-radius: $border-radius-base;
     text-align: center;
 }
 
-
-.form_container .manage_tip .title {
-    font-family: "Microsoft YaHei";
+.manage_tip .title {
+    font-family: "Microsoft JhengHei", "Microsoft YaHei";
     font-weight: bold;
     font-size: 26px;
-    color: #fff;
+    color: white;
 }
 
 .registerForm {
-    margin-top: 20px;
-    background-color: #fff;
-    padding: 20px 40px 20px 20px;
-    border-radius: 5px;
-    box-shadow: 0px 5px 10px #cccc;
+    @include card($spacing-lg);
+    margin-top: $spacing-lg;
+}
+
+.button-row {
+    display: flex;
+    gap: $spacing-md;
+    width: 100%;
 }
 
 .submit_btn {
-    width: 100%;
+    @include gradient-button($success-color, darken($success-color, 10%));
+    flex: 1;
+}
+
+.back_btn {
+    flex: 1;
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+    
+    &:hover {
+        background-color: #5a6268;
+        border-color: #545b62;
+    }
 }
 </style>

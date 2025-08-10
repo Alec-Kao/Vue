@@ -190,6 +190,24 @@
                 </el-table-column>
                 <el-table-column 
                     prop="Operations"
+                    label="收藏"
+                    align="center"
+                    min-width="80"
+                    v-if="user.identity"
+                >
+                    <template #default="scope">
+                        <el-button
+                            size="default"
+                            :type="isFavorited(scope.row._id) ? 'warning' : 'primary'"
+                            :icon="isFavorited(scope.row._id) ? StarFilled : Star"
+                            circle
+                            @click="handleFavoriteClick(scope.row)"
+                            :title="isFavorited(scope.row._id) ? '取消收藏' : '添加收藏'"
+                        />
+                    </template>
+                </el-table-column>
+                <el-table-column 
+                    prop="Operations"
                     label="操作"
                     align="center"
                     style="margin-left: auto;"
@@ -234,6 +252,13 @@
         </div>
 
         <Dialog :dialog="dialog"  :formData="formData" @update="handleSearch"></Dialog>
+        <PlaylistDialog 
+            v-model:visible="showPlaylistDialog" 
+            :song="selectedSong" 
+            @added="handleSongAdded"
+        />
+        
+
     </div>
 </template>
 
@@ -241,9 +266,10 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount, nextTick  } from 'vue';
 import axios from 'axios';
 import { useStore } from 'vuex';
-import { ElMessage } from 'element-plus';
-import { Timer } from '@element-plus/icons-vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { Timer, Star, StarFilled } from '@element-plus/icons-vue';
 import Dialog from '../components/Dialog.vue';
+import PlaylistDialog from '../components/PlaylistDialog.vue';
 
 let resizeObserver = null;
 let refreshTimer = null;
@@ -251,10 +277,17 @@ let refreshTimer = null;
 onMounted(() => {
   window.addEventListener('resize', forceRecalculateLayout);
   handleSearch();
+  loadUserData(); // 載入用戶資料
+  
+  // 確保在頁面載入時也載入收藏清單
+  if (store.getters.isAuthenticated) {
+    loadUserPlaylists();
+  }
 
   // 新增自動刷新定時器（每 60 秒自動執行一次 handleSearch）
   refreshTimer = setInterval(() => {
     handleSearch();
+    loadUserPlaylists(); // 也刷新收藏清單
     console.log('✅ 自動刷新動漫歌曲資料');
   }, 60000);
 });
@@ -333,6 +366,11 @@ const handleSearch = () => {
       allTableData.value = res.data;
       filterTableData.value = res.data;
       setPaginations();
+      
+      // 如果用戶已登入，更新收藏清單狀態
+      if (user.value && user.value.id) {
+        loadUserPlaylists();
+      }
     })
     .catch(err => console.log(err));
 };
@@ -421,24 +459,117 @@ const defaultTime = new Date(2000, 1, 1, 12, 0, 0);
 
 const store = useStore();
 
+// 收藏清單相關變數
+const showPlaylistDialog = ref(false);
+const selectedSong = ref({});
+const userPlaylists = ref([]);
+
+
+// 載入用戶資料
+const loadUserData = async () => {
+  if (store.getters.isAuthenticated) {
+    try {
+      const response = await axios.get('/api/users/current');
+      store.dispatch('setUser', response.data);
+      
+      // 載入用戶的收藏清單
+      await loadUserPlaylists();
+    } catch (error) {
+      console.error('載入用戶資料失敗', error);
+    }
+  }
+};
+
+// 載入用戶的收藏清單
+const loadUserPlaylists = async () => {
+  if (!user.value || !user.value.id) {
+    userPlaylists.value = [];
+    return;
+  }
+  
+  try {
+    const response = await axios.get('/api/users/playlists');
+    if (response.data.success) {
+      // 按創建時間排序，最先創建的在最上面
+      userPlaylists.value = response.data.playlists.sort((a, b) => new Date(a.date) - new Date(b.date));
+    }
+  } catch (error) {
+    console.error('載入收藏清單失敗:', error);
+    userPlaylists.value = [];
+  }
+};
+
+// 檢查歌曲是否已被收藏
+const isFavorited = (songId) => {
+  if (!user.value || !user.value.id || !userPlaylists.value.length) {
+    return false;
+  }
+  
+  return userPlaylists.value.some(playlist => 
+    playlist.songs.some(song => 
+      typeof song === 'string' ? song === songId : song._id === songId
+    )
+  );
+};
+
+// 獲取包含某首歌曲的收藏清單
+const getPlaylistsContainingSong = (songId) => {
+  if (!songId || !userPlaylists.value.length) {
+    return [];
+  }
+  
+  return userPlaylists.value.filter(playlist => 
+    playlist.songs && playlist.songs.some(song => 
+      typeof song === 'string' ? song === songId : song._id === songId
+    )
+  );
+};
+
+// 處理收藏按鈕點擊
+const handleFavoriteClick = (song) => {
+  if (!user.value || !user.value.id) {
+    ElMessage.error('請先登入');
+    return;
+  }
+  
+  // 無論是否已收藏，都打開收藏清單對話框
+  selectedSong.value = song;
+  showPlaylistDialog.value = true;
+};
+
+// 添加到收藏清單
+const addToPlaylist = (song) => {
+  selectedSong.value = song;
+  showPlaylistDialog.value = true;
+};
+
+
+
+// 處理歌曲添加成功
+const handleSongAdded = () => {
+  // 重新載入收藏清單以更新按鈕狀態
+  loadUserPlaylists();
+  console.log('歌曲已添加到收藏清單');
+};
+
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import '@/assets/scss/variables';
+@import '@/assets/scss/mixins';
+
 .fillContainer {
     width: 100%;
     height: 100%;
-    padding: 20px;
+    padding: $spacing-lg;
     box-sizing: border-box;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background: linear-gradient(135deg, $background-base 0%, #c3cfe2 100%);
     min-height: 100vh;
 }
 
 .table_container {
-    margin-top: 20px;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    padding: 20px;
+    @include card($spacing-lg, 12px);
+    margin-top: $spacing-lg;
     overflow-x: auto;
 }
 
@@ -457,127 +588,10 @@ const store = useStore();
 .pagination {
     display: flex;
     justify-content: flex-end;
-    margin-top: 20px;
+    margin-top: $spacing-lg;
 }
 
-/* 表單容器美化 */
-::v-deep(.el-form) {
-    background: #fff;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    margin-bottom: 20px;
-}
-
-/* 輸入框美化 */
-::v-deep(.el-input__wrapper) {
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    transition: all 0.3s ease;
-}
-
-::v-deep(.el-input__wrapper:hover) {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-::v-deep(.el-input__wrapper.is-focus) {
-    box-shadow: 0 4px 12px rgba(64, 158, 255, 0.2);
-}
-
-/* 選擇器美化 */
-::v-deep(.el-select .el-input__wrapper) {
-    border-radius: 8px;
-}
-
-/* 按鈕美化 */
-::v-deep(.el-button) {
-    border-radius: 8px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-::v-deep(.el-button:hover) {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-::v-deep(.el-button--primary) {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
-}
-
-::v-deep(.el-button--warning) {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    border: none;
-}
-
-::v-deep(.el-button--danger) {
-    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-    border: none;
-}
-
-/* 表格美化 */
-
-::v-deep(.el-table) {
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    min-width: 1200px;
-}
-
-
-::v-deep(.el-table th) {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: #fff;
-    font-weight: 600;
-    border: none;
-}
-
-
-::v-deep(.el-table tr:hover > td) {
-    background-color: #f8f9ff !important;
-}
-
-
-::v-deep(.el-table td) {
-    border-bottom: 1px solid #f0f0f0;
-}
-
-/* 分頁美化 */
-::v-deep(.el-pagination) {
-    background: #fff;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-::v-deep(.el-pagination .el-pager li) {
-    border-radius: 6px;
-    margin: 0 2px;
-}
-
-::v-deep(.el-pagination .el-pager li.is-active) {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: #fff;
-}
-
-/* 標籤美化 */
-::v-deep(.el-form-item__label) {
-    font-size: 14px;
-    font-weight: 600;
-    color: #2c3e50;
-}
-
-::v-deep(.el-select .el-input__inner) {
-    color: #2c3e50 !important;
-    font-size: 14px;
-}
-
-/* 日期選擇器美化 */
-::v-deep(.el-date-editor) {
-    border-radius: 8px;
-}
+/* Element Plus 樣式已移至全域樣式文件 _element-plus-theme.scss */
 
 /* 鏈接美化 */
 ::v-deep(a) {
@@ -585,5 +599,12 @@ const store = useStore();
     text-decoration: none;
     font-weight: 500;
     transition: all 0.3s ease;
+}
+
+/* 對話框頁面特定樣式 */
+.dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
 }
 </style>

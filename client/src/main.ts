@@ -5,6 +5,7 @@ import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
 import router from './router';
 import store from './store';
+import './assets/scss/main.scss';
 
 // Vue.config.productionTip = false; // Vue 2 用法
 // Vue.prototyoe.$axios = axios; // Vue 2 用法

@@ -133,8 +133,9 @@ const onSubmit = () => {
     if (valid) {
       const isEdit = dialog.option === 'edit';
       const url = isEdit ? `edit/${formData.id}` : 'add';
+      const method = isEdit ? 'put' : 'post';
   
-      axios.post(`/api/animesongs/${url}`, formData)
+      axios[method](`/api/animesongs/${url}`, formData)
         .then(() => {
           ElMessage.success(isEdit ? '數據更新成功' : '新增數據成功');
           dialog.show = false
@@ -159,6 +160,6 @@ watch(
 )
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 
 </style>

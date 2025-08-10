@@ -76,10 +76,10 @@ router.post("/add", passport.authenticate("jwt", {session:false}), (req, res) =>
     })
 })
 
-// $route  Post api/animesongs/edit/:id
+// $route  PUT api/animesongs/edit/:id
 // @desc   編輯資訊接口
 // @access Public
-router.post("/edit/:id", passport.authenticate("jwt", {session:false}), (req, res) => {
+router.put("/edit/:id", passport.authenticate("jwt", {session:false}), (req, res) => {
     const profileFields = {};
 
     if (req.body.workName !== undefined) profileFields.workName = req.body.workName;

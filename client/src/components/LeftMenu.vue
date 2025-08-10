@@ -50,7 +50,8 @@ const items = ref([
     path: 'animesong',
     iconComponent: Headset,
     children: [
-      { path: 'animesonglist', name: '動漫歌曲列表' }
+      { path: 'animesonglist', name: '動漫歌曲列表' },
+      { path: 'favoriteslist', name: '收藏歌曲' }
     ]
   },
   {
@@ -66,7 +67,10 @@ const items = ref([
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style lang="scss" scoped>
+@import '@/assets/scss/variables';
+@import '@/assets/scss/mixins';
+
 .menu_page {
   position: fixed;
   top: 71px;
@@ -74,42 +78,78 @@ const items = ref([
   min-height: 100%;
   background-color: #324057;
   z-index: 99;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  
+  @include mobile {
+    width: 60px !important;
+  }
 }
-.el-menu {
+
+::v-deep(.el-menu) {
   border: none;
+  background-color: transparent;
 }
+
 .fa-margin {
-  margin-right: 5px;
+  margin-right: $spacing-xs + 1px;
+  color: rgba(white, 0.8);
 }
-.el-menu-vertical-demo:not(.el-menu--collapse) {
-  width: 180px;
-  min-height: 400px;
+
+::v-deep(.el-menu-vertical-demo) {
+  &:not(.el-menu--collapse) {
+    width: 180px;
+    min-height: 400px;
+    
+    @include mobile {
+      width: 60px !important;
+    }
+  }
+  
+  &.el-menu--collapse {
+    width: 35px;
+  }
 }
-.el-menu-vertical-demo {
-  width: 35px;
-}
-.el-submenu .el-menu-item {
+
+::v-deep(.el-submenu .el-menu-item) {
   min-width: 180px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: rgba($primary-color, 0.1) !important;
+  }
+  
+  @include mobile {
+    min-width: 120px;
+  }
 }
 
 .hiddenDropdown,
 .hiddenDropname {
   display: none;
 }
+
 a {
   text-decoration: none;
+  color: inherit;
+  
+  &:hover {
+    color: $primary-color;
+  }
 }
 
-/* 響應式：手機時縮小導航欄 */
-/* @media (max-width: 768px) {
+// 響應式導航欄改進
+@include mobile {
   .menu_page {
     width: 60px !important;
   }
-  .el-menu-vertical-demo:not(.el-menu--collapse) {
+  
+  ::v-deep(.el-menu-vertical-demo:not(.el-menu--collapse)) {
     width: 60px !important;
   }
-  .el-submenu .el-menu-item {
+  
+  ::v-deep(.el-submenu .el-menu-item) {
     min-width: 120px;
   }
-} */
+}
 </style>
